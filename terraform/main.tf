@@ -40,6 +40,61 @@ module "vpc" {
   }
 }
 
+
+
+
+
+
+
+
+variable "bitbucket_ip" {
+  type    = list(string)
+  default = [
+    "13.52.5.0/25", "104.192.136.0/21", "185.166.140.0/22", "104.192.136.0/21", "13.52.5.96/28", "13.236.8.224/28",
+    "18.184.99.224/28", "18.234.32.224/28", "18.246.31.224/28", "52.215.192.224/28", "104.192.137.240/28",
+    "104.192.138.240/28", "104.192.140.240/28", "104.192.142.240/28", "104.192.143.240/28", "185.166.143.240/28",
+    "185.166.142.240/28", "18.205.93.0/25", "18.234.32.128/25"
+  ]
+}
+
+resource "aws_security_group" "ec2-test" {
+  name        = "ec2-test"
+  description = "Allow test access"
+  vpc_id      = module.vpc.vpc_id
+
+  dynamic "ingress" {
+    for_each = var.bitbucket_ip
+    content {
+      from_port   = 8080
+      to_port     = 8080
+      protocol    = "tcp"
+      cidr_blocks = [ingress.value]
+    }
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "20.8.5"
